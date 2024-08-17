@@ -1,0 +1,131 @@
+class Game
+{
+protected:
+	string gameMode;
+	Player p1;
+	WordsManager wordsobj;
+
+	// extras
+	string temp;
+	int tempint;
+	string word;
+	int wordLength;
+	vector<char> guessedWords;
+	vector<char> mistakes;
+	char ch;
+
+public:
+	Game()
+	{ // initialStart();
+	}
+	void initialStart()
+	{
+		cout << "Enter Name of the Player: " << endl;
+		cin >> temp;
+		p1.setName(temp);
+		p1.updateScore();
+		startGame();
+	}
+	int endGame()
+	{
+		cout << "The game has been ended" << endl;
+		return 0;
+	}
+	void startGame()
+	{
+		cout << "Enter Game Mode: " << endl;
+		cin >> gameMode;
+		if (gameMode == "time")
+		{
+			// Timer timerGame;
+			endGame();
+		}
+		else
+		{
+			cout << "Select category :1 - animal, 2 - random, 3- country , 4- food";
+			cin >> temp;
+			string word = wordsobj.returnWord(temp);
+			wordLength = word.length();
+			bool win = false;
+			do
+			{
+				bool flag = false;
+				cout << "\nIncorrect guess: " << endl;
+				if (p1.GetMistakes() == 0)
+				{
+
+					cout << "None";
+				}
+				else
+				{
+					for (int i = 0; i < p1.GetMistakes(); i++)
+					{
+						cout << mistakes[i] << " ";
+					}
+				}
+
+				for (int i = 0; i < p1.GetGuessed(); i++)
+				{
+					cout << guessedWords[i] << " ";
+				}
+
+				cout << "\tEnter an alphabet in lower case : ";
+				do
+				{
+					cin >> ch;
+				} while (getchar() != '\n');
+				for (int i = 0; i < word.length(); i++)
+				{
+					if (word[i] == ch)
+					{
+						flag = true;
+						guessedWords.push_back(ch);
+						p1.SetGuessed(p1.GetGuessed() + 1);
+						displayGuessed();
+					}
+				}
+
+				if (flag == false)
+				{
+					mistakes.push_back(ch);
+					p1.SetMistakes(p1.GetMistakes() + 1);
+					displayGuessed();
+				}
+
+				if (p1.GetGuessed() == word.length())
+					win = true;
+
+			} while (p1.GetMistakes() < 6 && win == false);
+			if (win == true)
+			{
+				cout << "You won, the word is " << endl;
+				displayGuessed();
+				p1.updateScore();
+			}
+			else
+			{
+				cout << "\n\n\tGuess failed!\n\tThe word was " << endl;
+				displayGuessed();
+			}
+		}
+	}
+	void displayGuessed()
+	{
+		bool flag = false;
+		for (int i = 0; i < word.length(); ++i)
+		{
+			flag = false;
+			for (int j = 0; j < p1.GetGuessed(); ++j)
+			{
+				if (word[i] == guessedWords[j])
+				{
+					cout << word[i];
+					flag = true;
+				}
+				if (!flag)
+					cout << "_";
+				cout << " ";
+			}
+		}
+	}
+};
